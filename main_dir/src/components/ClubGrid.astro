@@ -1,0 +1,45 @@
+---
+// src/components/ClubGrid.astro
+import type { Club } from "../data/clubs";
+
+export interface Props {
+  clubs: Club[];
+  searchTerm?: string;
+  category?: string;
+}
+
+const { clubs, searchTerm = "", category = "All" } = Astro.props;
+
+const filteredClubs = clubs.filter((club) => {
+  const matchesSearch = club.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const matchesCategory = category === "All" || club.category === category;
+  return matchesSearch && matchesCategory;
+});
+---
+
+<div class="club-grid-section">
+  {filteredClubs.length > 0 ? (
+    <div class="club-grid">
+      {filteredClubs.map((club) => (
+        <a href={`/clubs/${club.id}`} class="club-card" key={club.id}>
+          <div class="club-card-header">
+            <img src={club.logo} alt={`${club.name} logo`} class="club-logo" loading="lazy" width={60} height={60} />
+            <div class="club-card-info">
+              <div class="club-card-category">{club.category}</div>
+              <h3 class="club-card-name">{club.name}</h3>
+              <p class="club-card-tagline">{club.tagline}</p>
+            </div>
+          </div>
+          <div class="club-card-footer">
+            <span class="visit-btn outline">View Details</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  ) : (
+    <div class="empty-state">
+      <h3>No clubs found</h3>
+      <p>Try adjusting your search or filter.</p>
+    </div>
+  )}
+</div>

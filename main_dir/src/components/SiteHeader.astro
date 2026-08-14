@@ -1,0 +1,46 @@
+---
+// src/components/SiteHeader.astro
+import { useState } from "react";
+---
+
+<header class="site-header" x-data="{ isOpen: false }">
+  <div class="header-inner">
+    <a href="/" class="brand-link">
+      <span class="crest-placeholder">SA</span>
+      <span class="brand-copy">
+        <span class="brand-name">Aloysian Clubs Hub.</span>
+        <span class="brand-university">St Aloysius University</span>
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="/" class="nav-link" aria-current="page">Home</a>
+      <a href="/clubs" class="nav-link">All Clubs</a>
+      <span class="nav-link nav-link--muted" aria-disabled="true">Categories <small>Phase 2</small></span>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </nav>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="mobile-navigation"
+      x-on:click="isOpen = !isOpen"
+      x-bind:aria-expanded="isOpen"
+      x-bind:aria-label="isOpen ? 'Close navigation menu' : 'Open navigation menu'"
+    >
+      <svg x-show="!isOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      <svg x-show="isOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+
+  <nav id="mobile-navigation" class="mobile-menu" x-show="isOpen" x-transition:enter.duration.200ms>
+    <a href="/" class="nav-link" aria-current="page">Home</a>
+    <a href="/clubs" class="nav-link">All Clubs</a>
+    <span class="nav-link nav-link--muted" aria-disabled="true">Categories <small>Phase 2</small></span>
+    <a href="/about" class="nav-link">About</a>
+    <a href="/contact" class="nav-link">Contact</a>
+  </nav>
+</header>

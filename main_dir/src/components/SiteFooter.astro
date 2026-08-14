@@ -1,0 +1,54 @@
+---
+// src/components/SiteFooter.astro
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <section aria-labelledby="footer-university-heading">
+        <h2 id="footer-university-heading" class="footer-heading">
+          St Aloysius University
+        </h2>
+        <address class="footer-address">
+          St Aloysius College Road,
+          <br />
+          Kodialbail, Mangaluru – 575003,
+          <br />
+          Karnataka, India.
+        </address>
+        <p class="footer-motto">Lucet et Ardet — Shine to Enkindle</p>
+      </section>
+
+      <section aria-labelledby="footer-links-heading">
+        <h2 id="footer-links-heading" class="footer-heading">Quick links</h2>
+        <ul class="footer-links">
+          <li><a href="/" class="footer-placeholder">Home</a></li>
+          <li><a href="/clubs" class="footer-placeholder">All Clubs</a></li>
+          <li><span class="footer-placeholder" aria-disabled="true">Categories <small>Phase 2</small></span></li>
+          <li><a href="/about" class="footer-placeholder">About</a></li>
+          <li><a href="/contact" class="footer-placeholder">Contact</a></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="footer-social-heading">
+        <h2 id="footer-social-heading" class="footer-heading">Stay connected</h2>
+        <p class="footer-text">Social spaces will be added in a later phase.</p>
+        <div class="social-list" aria-label="Social media placeholders">
+          <span class="social-link" role="img" aria-label="Facebook placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </span>
+          <span class="social-link" role="img" aria-label="Instagram placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          </span>
+          <span class="social-link" role="img" aria-label="LinkedIn placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+          </span>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; {new Date().getFullYear()} St Aloysius (Deemed to be University), Mangalore. All rights reserved.
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,74 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { clubs } from "../../data/clubs";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+
+export async function getStaticPaths() {
+  return clubs.map((club) => ({
+    params: { id: club.id },
+    props: { club },
+  }));
+}
+
+const { club } = Astro.props;
+---
+
+<Layout title={`${club.name} - Aloysian Clubs Hub`}>
+  <div class="site-shell">
+    <SiteHeader />
+    <main id="main-content" class="club-detail">
+      <div class="club-detail-inner">
+        <a href="/clubs" class="back-link">
+          <ArrowLeft size={18} />
+          Back to all clubs
+        </a>
+
+        <div class="club-detail-card">
+          <div class="club-detail-header">
+            <div class="club-logo-large">
+              <img
+                src={club.logo}
+                alt={`${club.name} logo`}
+                width={120}
+                height={120}
+                loading="lazy"
+              />
+            </div>
+            <div class="club-detail-info">
+              <span class="club-category">{club.category}</span>
+              <h1 class="club-name">{club.name}</h1>
+              <p class="club-tagline">{club.tagline}</p>
+            </div>
+          </div>
+
+          <div class="club-detail-body">
+            <div class="club-description">
+              <h2>About the Club</h2>
+              <p>{club.description}</p>
+            </div>
+
+            <div class="club-coordinator">
+              <h3>Faculty Coordinator</h3>
+              <p>{club.coordinator || "To be announced"}</p>
+            </div>
+
+            {club.website && (
+              <a
+                href={club.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="visit-website-btn"
+              >
+                Visit {club.name}'s Website
+                <ExternalLink size={18} />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </main>
+    <SiteFooter />
+  </div>
+</Layout>

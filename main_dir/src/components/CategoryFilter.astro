@@ -1,0 +1,21 @@
+---
+// src/components/CategoryFilter.astro
+import { useState } from "react";
+
+const categories = ["All", "Cultural", "Technical", "Literary", "Sports", "Social Service", "Arts & Media"];
+---
+
+<div class="filters-section">
+  <div class="category-buttons" x-data="{ active: 'All' }">
+    {categories.map((category) => (
+      <button
+        class="category-btn"
+        x-on:click="active = '$category'"
+        x-bind:class="{ active: active === '$category' }"
+        data-category={category}
+      >
+        {category}
+      </button>
+    ))}
+  </div>
+</div>

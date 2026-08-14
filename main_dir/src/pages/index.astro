@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import HeroSection from "../components/HeroSection.astro";
+import AboutSection from "../components/AboutSection.astro";
+import CategoryFilter from "../components/CategoryFilter.astro";
+import ClubGrid from "../components/ClubGrid.astro";
+import { clubs } from "../data/clubs";
+---
+
+<Layout title="Aloysian Clubs Hub">
+  <div class="site-shell">
+    <SiteHeader />
+    <main id="main-content">
+      <HeroSection />
+      <AboutSection />
+      <CategoryFilter />
+      <ClubGrid clubs={clubs} />
+    </main>
+    <SiteFooter />
+  </div>
+</Layout>
