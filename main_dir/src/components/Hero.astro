@@ -1,53 +1,63 @@
 ---
+// src/components/Hero.astro
 ---
-<section class="relative w-full max-w-container_max_width px-margin_mobile md:px-gutter pt-32 pb-32 mx-auto flex flex-col md:flex-row items-center justify-between gap-stack_lg z-10">
-    <div class="flex-1 flex flex-col items-start gap-stack_md relative z-20">
-        <div class="inline-flex items-center gap-3 mb-8">
-            <div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
-            <span class="font-meta-label text-meta-label text-on-surface-variant uppercase tracking-widest">Registry Active</span>
-            <span x-cloak x-show="isAdmin" class="font-meta-label text-meta-label text-primary ml-4 border-l border-outline-variant pl-4">
-                Total Clicks: <span x-text="getTotalClicks()"></span>
-            </span>
-        </div>
+<section class="relative w-full bg-on-surface text-surface overflow-hidden">
+    <!-- Subtle dark mode radial glow -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,_rgba(249,115,22,0.12)_0%,_transparent_60%)] pointer-events-none"></div>
+
+    <div class="relative max-w-container_max_width px-margin_mobile md:px-gutter pt-32 pb-32 mx-auto flex flex-col md:flex-row items-center justify-between gap-stack_lg z-10">
         
-        <h1 class="font-display-lg text-display-lg md:text-[88px] leading-none max-w-3xl text-on-surface mb-6">
-            Find your <br class="hidden md:block">
-            <span class="gradient-text-solar italic pr-4">club</span> 
-            at St Aloysius.
-        </h1>
-        
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-10">
-            Access the official registry of student organizations. Connect with peers, develop technical skills, and manage your campus involvement.
-        </p>
-        
-        <div class="flex flex-wrap gap-6">
-            <button @click="document.getElementById('directory-section').scrollIntoView({behavior: 'smooth'})" class="bg-on-surface text-surface font-meta-label text-meta-label px-8 py-4 border border-on-surface hover:bg-surface hover:text-on-surface transition-all duration-300 flex items-center gap-3 uppercase tracking-widest">
-                Browse Directory
-            </button>
-            <button x-show="!isAdmin" class="bg-transparent text-on-surface border border-outline-variant font-meta-label text-meta-label px-8 py-4 hover:border-on-surface transition-all duration-300 flex items-center gap-3 uppercase tracking-widest">
-                View Calendar
-            </button>
-            <button x-cloak x-show="isAdmin" @click="document.getElementById('analytics-section').scrollIntoView({behavior: 'smooth'})" class="bg-transparent text-primary border border-primary font-meta-label text-meta-label px-8 py-4 hover:bg-primary/5 transition-all duration-300 flex items-center gap-3 uppercase tracking-widest">
-                Show Analytics
-            </button>
-        </div>
-    </div>
-    
-    <!-- Floating Logos Area -->
-    <div class="flex-1 relative w-full h-[500px] hidden lg:block z-10">
-        <div class="absolute top-0 right-24 w-48 h-48 bg-white/80 backdrop-blur-md diffusion-shadow flex items-center justify-center animate-drift p-6 z-30">
-            <div class="w-24 h-24 border-2 border-primary rounded-full flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300">
-                <span class="material-symbols-outlined text-primary text-5xl">precision_manufacturing</span>
+        <div class="flex-1 flex flex-col items-start gap-stack_md relative z-20">
+            <div class="inline-flex items-center gap-3 mb-8">
+                <div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                <span class="font-meta-label text-meta-label text-outline uppercase tracking-widest">Registry Active</span>
+                <span x-cloak x-show="isAdmin" class="font-meta-label text-meta-label text-primary ml-4 border-l border-outline-variant/30 pl-4">
+                    Total Clicks: <span x-text="getTotalClicks()"></span>
+                </span>
+            </div>
+            
+            <h1 class="font-display-lg text-display-lg md:text-[88px] leading-none max-w-3xl text-surface mb-6">
+                Find your <br class="hidden md:block">
+                <span class="gradient-text-solar italic pr-4">club</span> 
+                at St Aloysius.
+            </h1>
+            
+            <p class="font-body-lg text-body-lg text-outline max-w-xl mb-10">
+                Access the official registry of student organizations. Connect with peers, develop technical skills, and manage your campus involvement.
+            </p>
+            
+            <div class="flex flex-wrap gap-6">
+                <button @click="document.getElementById('directory-section').scrollIntoView({behavior: 'smooth'})" class="bg-primary text-white font-meta-label text-meta-label px-8 py-4 hover:bg-primary/90 transition-all duration-300 flex items-center gap-3 uppercase tracking-widest">
+                    Browse Directory
+                </button>
+                <button x-show="!isAdmin" class="bg-transparent text-surface border border-outline-variant/50 font-meta-label text-meta-label px-8 py-4 hover:border-surface transition-all duration-300 flex items-center gap-3 uppercase tracking-widest">
+                    View Calendar
+                </button>
+                <button x-cloak x-show="isAdmin" @click="document.getElementById('analytics-section').scrollIntoView({behavior: 'smooth'})" class="bg-transparent text-primary border border-primary/50 font-meta-label text-meta-label px-8 py-4 hover:bg-primary/10 hover:border-primary transition-all duration-300 flex items-center gap-3 uppercase tracking-widest">
+                    Show Analytics
+                </button>
             </div>
         </div>
-        <div class="absolute top-56 right-64 w-32 h-32 bg-white/80 backdrop-blur-md diffusion-shadow flex items-center justify-center animate-drift-slow p-4 z-20" style="animation-delay: -2s;">
-            <div class="w-16 h-16 border-2 border-on-surface-variant flex items-center justify-center rotate-45 opacity-80 hover:opacity-100 transition-opacity duration-300">
-                <span class="material-symbols-outlined text-on-surface-variant text-3xl -rotate-45">theater_comedy</span>
+        
+        <!-- Floating Logos Area (Adapted for Dark Background) -->
+        <div class="flex-1 relative w-full h-[500px] hidden lg:block z-10">
+            <!-- Logo 1 -->
+            <div class="absolute top-0 right-24 w-48 h-48 bg-inverse-surface/60 backdrop-blur-md border border-white/5 diffusion-shadow flex items-center justify-center animate-drift p-6 z-30">
+                <div class="w-24 h-24 border-2 border-primary rounded-full flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300">
+                    <span class="material-symbols-outlined text-primary text-5xl">precision_manufacturing</span>
+                </div>
             </div>
-        </div>
-        <div class="absolute bottom-16 right-8 w-56 h-56 bg-white/80 backdrop-blur-md diffusion-shadow flex items-center justify-center animate-drift p-8 z-10" style="animation-delay: -5s;">
-            <div class="w-28 h-28 bg-surface-variant flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300">
-                <span class="material-symbols-outlined text-primary text-6xl">code</span>
+            <!-- Logo 2 -->
+            <div class="absolute top-56 right-64 w-32 h-32 bg-inverse-surface/60 backdrop-blur-md border border-white/5 diffusion-shadow flex items-center justify-center animate-drift-slow p-4 z-20" style="animation-delay: -2s;">
+                <div class="w-16 h-16 border-2 border-outline-variant/30 flex items-center justify-center rotate-45 opacity-80 hover:opacity-100 transition-opacity duration-300">
+                    <span class="material-symbols-outlined text-outline-variant text-3xl -rotate-45">theater_comedy</span>
+                </div>
+            </div>
+            <!-- Logo 3 -->
+            <div class="absolute bottom-16 right-8 w-56 h-56 bg-inverse-surface/60 backdrop-blur-md border border-white/5 diffusion-shadow flex items-center justify-center animate-drift p-8 z-10" style="animation-delay: -5s;">
+                <div class="w-28 h-28 bg-white/5 flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300 rounded-lg">
+                    <span class="material-symbols-outlined text-primary text-6xl">code</span>
+                </div>
             </div>
         </div>
     </div>
