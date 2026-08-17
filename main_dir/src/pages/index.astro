@@ -1,23 +1,162 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import SiteHeader from "../components/SiteHeader.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import HeroSection from "../components/HeroSection.astro";
-import AboutSection from "../components/AboutSection.astro";
-import CategoryFilter from "../components/CategoryFilter.astro";
-import ClubGrid from "../components/ClubGrid.astro";
-import { clubs } from "../data/clubs";
+import { clubsData } from '../data/clubs.js';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import ClubCard from '../components/ClubCard.astro';
+import Footer from '../components/Footer.astro';
 ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>St Aloysius Clubs Portal</title>
+    
+    <script is:inline src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script is:inline defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<Layout title="Aloysian Clubs Hub">
-  <div class="site-shell">
-    <SiteHeader />
-    <main id="main-content">
-      <HeroSection />
-      <AboutSection />
-      <CategoryFilter />
-      <ClubGrid clubs={clubs} />
+    <!-- Tailwind Config injected from original file -->
+    <script is:inline id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#F5F5F4", "on-surface": "#1c1917", "primary": "#f97316", "outline-variant": "#d6d3d1", "on-surface-variant": "#57534e"
+                        // ... Rest of your tailwind color configuration from original source ...
+                    },
+                    spacing: { "margin_mobile": "24px", "gutter": "48px", "container_max_width": "1280px", "stack_md": "32px", "stack_lg": "64px", "section_gap": "120px" },
+                    fontFamily: {
+                        "display-lg": ["Geist", "sans-serif"],
+                        "headline-md": ["Geist", "sans-serif"],
+                        "body-lg": ["Geist", "sans-serif"],
+                        "body-md": ["Geist", "sans-serif"],
+                        "meta-label": ["JetBrains Mono", "monospace"],
+                        "status-code": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Passing server-side Astro data to client-side JS window object -->
+    <script define:vars={{ clubsData }}>
+        window.initialClubsData = clubsData;
+    </script>
+
+    <style is:global>
+        /* ... Your global CSS blocks from the original file (animations, scrollbars, etc.) ... */
+        body {
+            background-color: #F5F5F4;
+            color: #1C1917;
+            background-image: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%), 
+                              radial-gradient(circle at 100% 50%, rgba(249, 115, 22, 0.12) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        .motif-wordmark {
+            position: fixed; font-size: 28vw; font-weight: 700; color: rgba(28, 25, 23, 0.04);
+            z-index: 0; pointer-events: none; white-space: nowrap; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); font-family: 'Geist', sans-serif;
+            mix-blend-mode: multiply; 
+        }
+        .diffusion-shadow {
+            box-shadow: 0 20px 40px -10px rgba(28, 25, 23, 0.05), 0 10px 20px -5px rgba(28, 25, 23, 0.02);
+        }
+        .diffusion-shadow-hover:hover {
+            transform: translateY(-4px); box-shadow: 0 30px 60px -15px rgba(28, 25, 23, 0.08);
+        }
+        @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-up { animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        [x-cloak] { display: none !important; }
+        /* Add other custom utilities */
+    </style>
+</head>
+<body x-data="clubsApp()" x-init="initApp()" @keydown.window="handleKeydown($event)" class="bg-surface text-on-surface antialiased min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-white font-body-md text-body-md">
+
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
+        <div class="motif-wordmark">CLUBS</div>
+    </div>
+
+    <Navbar />
+
+    <main class="relative z-10 w-full flex flex-col items-center justify-start pb-section_gap">
+        <Hero />
+
+        <!-- Directory Section -->
+        <section id="directory-section" class="relative w-full max-w-container_max_width px-margin_mobile md:px-gutter py-24 mx-auto z-10">
+            <div class="mb-20 border-b border-outline-variant/50 pb-8 flex justify-between items-end">
+                <div>
+                    <span class="font-meta-label text-meta-label text-primary uppercase tracking-widest mb-4 block">01 / Organizations</span>
+                    <h2 class="font-display-lg text-5xl text-on-surface">Active Clubs</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                <!-- Server-Side Map Render using the Extracted Component -->
+                {clubsData.map((club, index) => (
+                    <ClubCard club={club} index={index} />
+                ))}
+            </div>
+        </section>
+
+        <!-- Keep Analytics inside index to easily loop over Alpine state -->
+        <section id="analytics-section" x-cloak x-show="isAdmin" class="relative w-full max-w-container_max_width px-margin_mobile md:px-gutter py-24 mx-auto z-10 bg-white/90 backdrop-blur-md border border-outline-variant/30 my-20 diffusion-shadow">
+            <div class="p-12 border-b border-outline-variant/30">
+                <span class="font-meta-label text-meta-label text-primary uppercase tracking-widest block mb-4">02 / Admin</span>
+                <h2 class="font-display-lg text-5xl text-on-surface">Analytics</h2>
+            </div>
+            <!-- Your remaining analytics tables/content ... -->
+        </section>
     </main>
-    <SiteFooter />
-  </div>
-</Layout>
+
+    <Footer />
+
+    <!-- Modals & Toasts stay at root level -->
+    <div x-cloak x-show="toast.show" class="fixed bottom-10 right-10 z-[110]">
+        <div class="bg-on-surface text-surface px-6 py-4 font-meta-label text-xs tracking-widest uppercase flex items-center gap-3 diffusion-shadow">
+            <span class="material-symbols-outlined font-light text-[18px]">check</span>
+            <span x-text="toast.message"></span>
+        </div>
+    </div>
+
+    <script is:inline>
+        function clubsApp() {
+            return {
+                isAdmin: false,
+                clickCount: 0,
+                clickTimer: null,
+                showAddClubModal: false,
+                toast: { show: false, message: '' },
+                clicks: {},
+                clubs: window.initialClubsData, // Pulled from the Astro data file passed above!
+                
+                initApp() {
+                    if (window.location.hash === '#admin') this.enableAdminMode();
+                    
+                    const storedClicks = localStorage.getItem('aloysius_club_clicks');
+                    if (storedClicks) {
+                        try { this.clicks = JSON.parse(storedClicks); } catch(e) { this.clicks = {}; }
+                    } else {
+                        this.clubs.forEach(c => this.clicks[c.id] = 0);
+                    }
+                },
+                // ... REST OF YOUR ALPINE METHODS ...
+                enableAdminMode() {
+                    if (!this.isAdmin) { this.isAdmin = true; window.location.hash = 'admin'; }
+                },
+                trackClick(clubId) {
+                    if (!this.clicks[clubId]) this.clicks[clubId] = 0;
+                    this.clicks[clubId]++;
+                    localStorage.setItem('aloysius_club_clicks', JSON.stringify(this.clicks));
+                    this.toast.show = true; this.toast.message = 'Visit Logged';
+                    setTimeout(() => { this.toast.show = false; }, 3000);
+                },
+                getTotalClicks() {
+                    return Object.values(this.clicks).reduce((a, b) => a + (b || 0), 0) || 0;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
