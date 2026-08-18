@@ -1,1079 +1,183 @@
 ---
-// src/layouts/Layout.astro
-export interface Props {
-  title: string;
-  description?: string;
-}
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 
-const { title, description = "A directory of student clubs at St Aloysius (Deemed to be University), Mangalore" } = Astro.props;
+const { title = "St Aloysius Clubs Portal" } = Astro.props;
 ---
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<head>
+    <meta charset="utf-8">
+    <!-- Cleanly disables annoying auto-zoom on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet" />
+    
+    <script is:inline src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script is:inline defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script is:inline id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#F5F5F4", "on-surface": "#1c1917", "primary": "#f97316", 
+                        "outline-variant": "#d6d3d1", "on-surface-variant": "#57534e", "inverse-surface": "#292524"
+                    },
+                    spacing: { "margin_mobile": "24px", "gutter": "48px", "container_max_width": "1280px", "stack_md": "32px", "stack_lg": "64px", "section_gap": "120px" },
+                    fontFamily: {
+                        "display-lg": ["Geist", "sans-serif"],
+                        "headline-md": ["Geist", "sans-serif"],
+                        "body-lg": ["Geist", "sans-serif"],
+                        "body-md": ["Geist", "sans-serif"],
+                        "meta-label": ["JetBrains Mono", "monospace"],
+                        "status-code": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+
     <style is:global>
-      @import "tailwindcss";
-      @import "tw-animate-css";
 
-      @custom-variant dark (&:is(.dark *));
-
-      :root {
-        /* Claude-inspired palette */
-        --coral: #cc785c;
-        --coral-active: #a9583e;
-        --coral-disabled: #e6dfd8;
-        --ink: #141413;
-        --body: #3d3d3a;
-        --body-strong: #252523;
-        --muted: #6c6a64;
-        --muted-soft: #8e8b82;
-        --hairline: #e6dfd8;
-        --hairline-soft: #ebe6df;
-        --canvas: #faf9f5;
-        --surface-soft: #f5f0e8;
-        --surface-card: #efe9de;
-        --surface-cream-strong: #e8e0d2;
-        --surface-dark: #181715;
-        --surface-dark-elevated: #252320;
-        --surface-dark-soft: #1f1e1b;
-        --on-primary: #ffffff;
-        --on-dark: #faf9f5;
-        --on-dark-soft: #a09d96;
-        --accent-teal: #5db8a6;
-        --accent-amber: #e8a55a;
-        --success: #5db872;
-        --warning: #d4a017;
-        --error: #c64545;
-
-        /* Legacy tokens mapped to new palette */
-        --maroon: var(--coral);
-        --gold: var(--accent-amber);
-        --warm-surface: var(--surface-card);
-        --line: var(--hairline);
-
-        --font-heading: 'Lora', Georgia, 'Times New Roman', serif;
-        --font-body: 'DM Sans', 'Segoe UI', Roboto, sans-serif;
-        --radius: 0.75rem;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        min-width: 320px;
-        scroll-behavior: smooth;
-      }
-
-      body {
-        margin: 0;
-        min-width: 320px;
-        min-height: 100dvh;
-        background: var(--canvas);
-        color: var(--ink);
-        font-family: var(--font-body);
-        font-size: 1rem;
-        line-height: 1.7;
-      }
-
-      button, a {
-        -webkit-tap-highlight-color: transparent;
-        transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
-      }
-
-      button:focus-visible, a:focus-visible {
-        outline: 3px solid var(--coral);
-        outline-offset: 4px;
-      }
-
-      .site-shell {
-        min-height: 100dvh;
-        display: flex;
-        flex-direction: column;
-        overflow-x: clip;
-      }
-
-      /* ============================================================
-         SITE HEADER — Cream nav with hairline border
-         ============================================================ */
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 20;
-        border-bottom: 1px solid var(--hairline);
-        background: color-mix(in srgb, var(--canvas) 94%, transparent);
-        backdrop-filter: blur(16px);
-      }
-
-      .header-inner {
-        width: min(100% - 2rem, 1180px);
-        min-height: 76px;
-        margin-inline: auto;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-
-      .brand-link {
-        min-height: 52px;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.7rem;
-        color: var(--ink);
-        text-decoration: none;
-      }
-
-      .brand-link:hover {
-        color: var(--coral);
-      }
-
-      .crest-placeholder {
-        width: 39px;
-        height: 45px;
-        flex: 0 0 auto;
-        display: grid;
-        place-items: center;
-        color: var(--on-primary);
-        background: var(--coral);
-        border: 2px solid var(--canvas);
-        border-radius: 48% 48% 45% 45% / 36% 36% 57% 57%;
-        box-shadow: 0 4px 10px rgba(204, 120, 92, 0.15);
-        font-family: var(--font-heading);
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-      }
-
-      .brand-copy {
-        display: grid;
-        line-height: 1.1;
-      }
-
-      .brand-name {
-        font-family: var(--font-heading);
-        font-size: clamp(1rem, 2.4vw, 1.2rem);
-        font-weight: 500;
-        letter-spacing: -0.02em;
-      }
-
-      .brand-university {
-        margin-top: 0.28rem;
-        color: var(--muted);
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .desktop-nav {
-        display: none;
-        align-items: center;
-        gap: 0.2rem;
-      }
-
-      .nav-link {
-        min-height: 44px;
-        display: inline-flex;
-        align-items: center;
-        padding: 0.45rem 0.75rem;
-        border-bottom: 2px solid transparent;
-        color: var(--muted);
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-decoration: none;
-        font-family: var(--font-body);
-      }
-
-      .nav-link:hover,
-      .nav-link[aria-current="page"] {
-        border-bottom-color: var(--accent-amber);
-        color: var(--coral);
-      }
-
-      .nav-link--muted {
-        cursor: default;
-        opacity: 0.7;
-      }
-
-      .nav-link--muted:hover {
-        border-bottom-color: transparent;
-        color: var(--muted);
-      }
-
-      .menu-toggle {
-        width: 46px;
-        height: 46px;
-        display: inline-grid;
-        place-items: center;
-        border: 1px solid var(--hairline);
-        border-radius: 0.7rem;
-        color: var(--coral);
-        background: var(--canvas);
-        cursor: pointer;
-      }
-
-      .menu-toggle:hover {
-        border-color: var(--accent-amber);
-        background: var(--surface-card);
-      }
-
-      .mobile-menu {
-        width: min(100% - 2rem, 1180px);
-        margin-inline: auto;
-        padding: 0 0 1rem;
-        display: grid;
-        gap: 0.25rem;
-      }
-
-      .mobile-menu .nav-link {
-        min-height: 48px;
-        padding-inline: 0.9rem;
-        border: 0;
-        border-radius: 0.65rem;
-      }
-
-      .mobile-menu .nav-link:hover,
-      .mobile-menu .nav-link[aria-current="page"] {
-        background: var(--surface-card);
-      }
-
-      @media (min-width: 1025px) {
-        .desktop-nav {
-          display: flex;
+        body {
+        background-color: #F5F5F4;
+        color: #1C1917;
+        /* Enhanced vibrant multi-light setup */
+        background-image: 
+            /* Top center - vibrant blue/cyan */
+            radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.35) 0%, transparent 60%), 
+            /* Top right - vibrant orange */
+            radial-gradient(circle at 100% 20%, rgba(249, 115, 22, 0.30) 0%, transparent 55%),
+            /* Bottom left - rich purple */
+            radial-gradient(circle at 0% 80%, rgba(168, 85, 247, 0.30) 0%, transparent 60%),
+            /* Top left - bright teal */
+            radial-gradient(circle at 5% 15%, rgba(45, 212, 191, 0.25) 0%, transparent 50%),
+            /* Bottom right - hot pink */
+            radial-gradient(circle at 95% 90%, rgba(244, 63, 94, 0.25) 0%, transparent 55%),
+            /* Center offset - subtle amber/yellow glow to tie it together */
+            radial-gradient(circle at 60% 50%, rgba(250, 204, 21, 0.15) 0%, transparent 45%);
+        background-attachment: fixed;
+        /* Prevents double-tap to zoom on touch devices */
+        touch-action: manipulation; 
+    }
+        .motif-wordmark {
+            position: fixed; font-size: 28vw; font-weight: 700; color: rgba(28, 25, 23, 0.04);
+            z-index: 0; pointer-events: none; white-space: nowrap; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); font-family: 'Geist', sans-serif;
+            mix-blend-mode: multiply; 
         }
-        .menu-toggle,
-        .mobile-menu {
-          display: none;
+        .diffusion-shadow {
+            box-shadow: 0 20px 40px -10px rgba(28, 25, 23, 0.05), 0 10px 20px -5px rgba(28, 25, 23, 0.02);
         }
-      }
-
-      /* ============================================================
-         HERO — Cream canvas, serif display, coral accents
-         ============================================================ */
-      .phase-preview {
-        position: relative;
-        isolation: isolate;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        min-height: 480px;
-        padding: 4.5rem 1rem 5.5rem;
-        background: var(--canvas);
-      }
-
-      .phase-preview::before,
-      .phase-preview::after {
-        position: absolute;
-        z-index: -1;
-        display: block;
-        border-radius: 999px;
-        content: '';
-        pointer-events: none;
-      }
-
-      .phase-preview::before {
-        width: 170px;
-        height: 170px;
-        top: 7%;
-        right: -80px;
-        background: rgba(204, 120, 92, 0.10);
-        transform: rotate(18deg);
-      }
-
-      .phase-preview::after {
-        width: 130px;
-        height: 130px;
-        bottom: 11%;
-        left: -72px;
-        background: rgba(232, 165, 90, 0.10);
-        transform: rotate(-24deg);
-      }
-
-      .preview-inner {
-        width: min(100%, 860px);
-        margin-inline: auto;
-        text-align: center;
-      }
-
-      .eyebrow {
-        margin: 0 0 1.25rem;
-        color: var(--coral);
-        font-size: 0.73rem;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        font-family: var(--font-body);
-      }
-
-      .preview-title {
-        max-width: 760px;
-        margin: 0 auto;
-        color: var(--ink);
-        font-family: var(--font-heading);
-        font-size: clamp(2.25rem, 8vw, 4.75rem);
-        font-weight: 400;
-        letter-spacing: -0.055em;
-        line-height: 1.08;
-      }
-
-      .preview-title em {
-        color: var(--coral);
-        font-style: normal;
-        text-decoration: underline;
-        text-decoration-color: var(--accent-amber);
-        text-decoration-thickness: 0.08em;
-        text-underline-offset: 0.12em;
-      }
-
-      .preview-copy {
-        max-width: 590px;
-        margin: 1.5rem auto 0;
-        color: var(--body);
-        font-size: clamp(1rem, 2vw, 1.15rem);
-        line-height: 1.75;
-        font-family: var(--font-body);
-      }
-
-      .preview-rule {
-        width: min(100%, 410px);
-        height: 1px;
-        margin: 2.5rem auto 0;
-        background: linear-gradient(90deg, transparent, var(--accent-amber), transparent);
-      }
-
-      .preview-note {
-        width: fit-content;
-        max-width: 100%;
-        margin: 2rem auto 0;
-        padding: 0.8rem 1.1rem;
-        border: 1px solid var(--hairline);
-        border-radius: 999px;
-        color: var(--muted);
-        background: rgba(255, 255, 255, 0.42);
-        font-size: 0.82rem;
-        font-family: var(--font-body);
-      }
-
-      /* ============================================================
-         ABOUT SECTION — Cream surface card
-         ============================================================ */
-      .about-preview {
-        background: var(--surface-card);
-        border-radius: 0.75rem;
-        padding: 2rem 1.5rem !important;
-        margin: 0 auto 3rem !important;
-      }
-
-      .about-preview h2 {
-        color: var(--coral) !important;
-      }
-
-      .about-preview p {
-        color: var(--body) !important;
-      }
-
-      .about-preview p strong {
-        color: var(--coral);
-      }
-
-      /* ============================================================
-         PAGE HEADER
-         ============================================================ */
-      .page-header {
-        padding: 3rem 1rem 1.5rem;
-        text-align: center;
-        background: var(--canvas);
-      }
-
-      .page-title {
-        font-family: var(--font-heading);
-        font-size: clamp(2rem, 5vw, 3rem);
-        color: var(--ink);
-        margin: 0;
-        font-weight: 400;
-        letter-spacing: -0.03em;
-      }
-
-      .page-description {
-        color: var(--body);
-        font-size: 1.1rem;
-        margin-top: 0.5rem;
-        font-family: var(--font-body);
-      }
-
-      /* ============================================================
-         FILTERS SECTION — Cream background with coral active state
-         ============================================================ */
-      .filters-section {
-        width: min(100% - 2rem, 1180px);
-        margin-inline: auto;
-        padding: 0 0 1.5rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: center;
-        justify-content: center;
-        background: var(--canvas);
-      }
-
-      .search-box {
-        flex: 1;
-        min-width: 200px;
-        max-width: 400px;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--hairline);
-        border-radius: 0.75rem;
-        font-size: 0.95rem;
-        background: var(--canvas);
-        font-family: var(--font-body);
-        transition: border-color 180ms ease;
-        color: var(--ink);
-      }
-
-      .search-box:focus {
-        outline: none;
-        border-color: var(--coral);
-      }
-
-      .search-box::placeholder {
-        color: var(--muted-soft);
-      }
-
-      .category-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-
-      .category-btn {
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--hairline);
-        border-radius: 999px;
-        background: var(--canvas);
-        color: var(--muted);
-        font-size: 0.85rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 180ms ease;
-        font-family: var(--font-body);
-      }
-
-      .category-btn:hover {
-        border-color: var(--accent-amber);
-        color: var(--coral);
-        background: var(--surface-soft);
-      }
-
-      .category-btn.active {
-        border-color: var(--coral);
-        background: var(--coral);
-        color: var(--on-primary);
-      }
-
-      /* ============================================================
-         CLUB GRID — Cards on cream canvas
-         ============================================================ */
-      .club-grid-section {
-        width: min(100% - 2rem, 1180px);
-        margin-inline: auto;
-        padding: 1rem 0 3rem;
-        background: var(--canvas);
-      }
-
-      .club-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-
-      .club-card {
-        background: var(--canvas);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        border: 1px solid var(--hairline);
-        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-        display: flex;
-        flex-direction: column;
-        text-decoration: none;
-        color: var(--ink);
-        box-shadow: 0 2px 8px rgba(20, 20, 19, 0.04);
-      }
-
-      .club-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 24px rgba(20, 20, 19, 0.08);
-        border-color: var(--accent-amber);
-      }
-
-      .club-card-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 0.75rem;
-      }
-
-      .club-logo {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        object-fit: contain;
-        background: var(--surface-card);
-        flex-shrink: 0;
-      }
-
-      .club-card-info {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .club-card-category {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--coral);
-        font-weight: 600;
-        font-family: var(--font-body);
-      }
-
-      .club-card-name {
-        font-family: var(--font-heading);
-        font-size: 1.1rem;
-        margin: 0.1rem 0;
-        color: var(--ink);
-        font-weight: 500;
-      }
-
-      .club-card-tagline {
-        font-size: 0.9rem;
-        color: var(--muted);
-        margin: 0;
-        line-height: 1.4;
-        font-family: var(--font-body);
-      }
-
-      .club-card-footer {
-        margin-top: 1rem;
-        display: flex;
-        justify-content: flex-end;
-      }
-
-      .visit-btn {
-        padding: 0.5rem 1.25rem;
-        border-radius: 0.75rem;
-        background: var(--coral);
-        color: var(--on-primary);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 180ms ease;
-        border: none;
-        cursor: pointer;
-        font-family: var(--font-body);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .visit-btn:hover {
-        background: var(--coral-active);
-      }
-
-      .visit-btn.outline {
-        background: transparent;
-        border: 1px solid var(--coral);
-        color: var(--coral);
-      }
-
-      .visit-btn.outline:hover {
-        background: var(--coral);
-        color: var(--on-primary);
-      }
-
-      @media (min-width: 640px) {
-        .club-grid {
-          grid-template-columns: repeat(2, 1fr);
+        .diffusion-shadow-hover:hover {
+            transform: translateY(-4px); box-shadow: 0 30px 60px -15px rgba(28, 25, 23, 0.08);
         }
-      }
+        @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-up { animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes drift { 0% { transform: translate(0, 0); } 50% { transform: translate(15px, -20px); } 100% { transform: translate(0, 0); } }
+        .animate-drift { animation: drift 12s ease-in-out infinite; }
+        .animate-drift-slow { animation: drift 18s ease-in-out infinite reverse; }
 
-      @media (min-width: 1024px) {
-        .club-grid {
-          grid-template-columns: repeat(3, 1fr);
+        [x-cloak] { display: none !important; }
+        
+        /* Mobile text size adjustments */
+        @media (max-width: 768px) {
+            input, textarea, select { font-size: 16px !important; } /* Stops iOS Safari zoom on focus */
         }
-      }
-
-      @media (min-width: 1280px) {
-        .club-grid {
-          grid-template-columns: repeat(4, 1fr);
-        }
-      }
-
-      /* ============================================================
-         CLUB DETAIL — Card on cream canvas
-         ============================================================ */
-      .club-detail {
-        padding: 2rem 1rem 4rem;
-        background: var(--canvas);
-      }
-
-      .club-detail-inner {
-        width: min(100%, 820px);
-        margin-inline: auto;
-      }
-
-      .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--muted);
-        text-decoration: none;
-        font-weight: 500;
-        margin-bottom: 1.5rem;
-        transition: color 180ms ease;
-        font-family: var(--font-body);
-      }
-
-      .back-link:hover {
-        color: var(--coral);
-      }
-
-      .club-detail-card {
-        background: var(--canvas);
-        border-radius: 0.75rem;
-        padding: 2rem;
-        border: 1px solid var(--hairline);
-        box-shadow: 0 2px 12px rgba(20, 20, 19, 0.06);
-      }
-
-      .club-detail-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-      }
-
-      .club-logo-large {
-        width: 120px;
-        height: 120px;
-        flex-shrink: 0;
-        border-radius: 50%;
-        overflow: hidden;
-        background: var(--surface-card);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .club-logo-large img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-
-      .club-detail-info {
-        flex: 1;
-      }
-
-      .club-category {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 999px;
-        background: var(--surface-card);
-        color: var(--coral);
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 0.5rem;
-        font-family: var(--font-body);
-      }
-
-      .club-name {
-        font-family: var(--font-heading);
-        font-size: clamp(1.5rem, 3vw, 2.5rem);
-        color: var(--ink);
-        margin: 0 0 0.25rem;
-        font-weight: 400;
-        letter-spacing: -0.03em;
-      }
-
-      .club-tagline {
-        font-size: 1.1rem;
-        color: var(--muted);
-        margin: 0;
-        font-family: var(--font-body);
-      }
-
-      .club-detail-body {
-        border-top: 1px solid var(--hairline);
-        padding-top: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      .club-description h2,
-      .club-coordinator h3 {
-        font-family: var(--font-heading);
-        color: var(--ink);
-        font-weight: 400;
-        letter-spacing: -0.02em;
-        margin: 0 0 0.5rem;
-      }
-
-      .club-description p {
-        color: var(--body);
-        line-height: 1.8;
-        margin: 0;
-        font-family: var(--font-body);
-      }
-
-      .club-coordinator p {
-        color: var(--muted);
-        margin: 0;
-        font-family: var(--font-body);
-      }
-
-      .visit-website-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.75rem;
-        background: var(--coral);
-        color: var(--on-primary);
-        text-decoration: none;
-        font-weight: 600;
-        width: fit-content;
-        transition: background 180ms ease;
-        font-family: var(--font-body);
-      }
-
-      .visit-website-btn:hover {
-        background: var(--coral-active);
-      }
-
-      /* ============================================================
-         ABOUT & CONTACT PAGES
-         ============================================================ */
-      .about-page,
-      .contact-page {
-        padding: 2rem 1rem 4rem;
-        background: var(--canvas);
-      }
-
-      .about-inner,
-      .contact-inner {
-        width: min(100%, 820px);
-        margin-inline: auto;
-      }
-
-      .about-section {
-        margin-bottom: 2.5rem;
-        background: var(--canvas);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        border: 1px solid var(--hairline);
-      }
-
-      .about-section h2 {
-        font-family: var(--font-heading);
-        color: var(--ink);
-        font-weight: 400;
-        letter-spacing: -0.02em;
-        font-size: 1.5rem;
-      }
-
-      .about-section p {
-        color: var(--body);
-        line-height: 1.8;
-        font-family: var(--font-body);
-      }
-
-      .about-section p em {
-        color: var(--coral);
-        font-style: italic;
-      }
-
-      .about-section p strong {
-        color: var(--coral);
-      }
-
-      /* ============================================================
-         CONTACT PAGE
-         ============================================================ */
-      .contact-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-        margin-top: 1.5rem;
-      }
-
-      .contact-form-section,
-      .contact-info-section {
-        background: var(--canvas);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        border: 1px solid var(--hairline);
-      }
-
-      .contact-form-section h2,
-      .contact-info-section h2 {
-        font-family: var(--font-heading);
-        color: var(--ink);
-        font-weight: 400;
-        letter-spacing: -0.02em;
-        font-size: 1.3rem;
-        margin: 0 0 1rem;
-      }
-
-      .contact-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      }
-
-      .form-group label {
-        font-weight: 500;
-        font-size: 0.9rem;
-        color: var(--ink);
-        font-family: var(--font-body);
-      }
-
-      .form-group input,
-      .form-group textarea {
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--hairline);
-        border-radius: 0.75rem;
-        font-size: 0.95rem;
-        font-family: var(--font-body);
-        transition: border-color 180ms ease;
-        background: var(--canvas);
-        color: var(--ink);
-      }
-
-      .form-group input:focus,
-      .form-group textarea:focus {
-        outline: none;
-        border-color: var(--coral);
-      }
-
-      .submit-btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.75rem;
-        background: var(--coral);
-        color: var(--on-primary);
-        font-weight: 600;
-        font-size: 1rem;
-        border: none;
-        cursor: pointer;
-        transition: background 180ms ease;
-        font-family: var(--font-body);
-      }
-
-      .submit-btn:hover {
-        background: var(--coral-active);
-      }
-
-      .contact-address {
-        font-style: normal;
-        color: var(--muted);
-        line-height: 1.8;
-        margin-bottom: 1.5rem;
-        font-family: var(--font-body);
-      }
-
-      .contact-address strong {
-        color: var(--ink);
-      }
-
-      @media (min-width: 768px) {
-        .contact-grid {
-          grid-template-columns: 1.5fr 1fr;
-        }
-      }
-
-      /* ============================================================
-         SITE FOOTER — Dark navy surface
-         ============================================================ */
-      .site-footer {
-        padding: 3rem 1rem 1.25rem;
-        background: var(--surface-dark);
-        color: var(--on-dark-soft);
-        margin-top: auto;
-        border-top: none;
-      }
-
-      .footer-inner {
-        width: min(100%, 1180px);
-        margin-inline: auto;
-      }
-
-      .footer-grid {
-        display: grid;
-        gap: 2rem;
-      }
-
-      .footer-heading {
-        margin: 0 0 0.75rem;
-        color: var(--on-dark);
-        font-family: var(--font-heading);
-        font-size: 1.15rem;
-        font-weight: 400;
-        letter-spacing: -0.02em;
-      }
-
-      .footer-text,
-      .footer-address {
-        margin: 0;
-        color: var(--on-dark-soft);
-        font-size: 0.9rem;
-        line-height: 1.75;
-        font-family: var(--font-body);
-      }
-
-      .footer-address {
-        max-width: 275px;
-      }
-
-      .footer-motto {
-        margin: 1rem 0 0;
-        color: var(--accent-amber);
-        font-family: var(--font-heading);
-        font-size: 0.95rem;
-        font-style: italic;
-      }
-
-      .footer-links {
-        margin: 0;
-        padding: 0;
-        display: grid;
-        gap: 0.5rem;
-        list-style: none;
-      }
-
-      .footer-placeholder {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-        color: var(--on-dark-soft);
-        font-size: 0.87rem;
-        text-decoration: none;
-        font-family: var(--font-body);
-        transition: color 180ms ease;
-      }
-
-      .footer-placeholder small {
-        color: var(--coral);
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .footer-placeholder:hover {
-        color: var(--on-dark);
-      }
-
-      .social-list {
-        display: flex;
-        gap: 0.55rem;
-      }
-
-      .social-link {
-        width: 44px;
-        height: 44px;
-        display: inline-grid;
-        place-items: center;
-        border: 1px solid var(--surface-dark-elevated);
-        border-radius: 50%;
-        color: var(--on-dark-soft);
-        background: var(--surface-dark-elevated);
-        text-decoration: none;
-        transition: all 180ms ease;
-        cursor: default;
-      }
-
-      .social-link:hover {
-        border-color: var(--accent-amber);
-        color: var(--on-dark);
-        transform: translateY(-2px);
-      }
-
-      .footer-bottom {
-        margin-top: 2.5rem;
-        padding-top: 1.1rem;
-        border-top: 1px solid var(--surface-dark-elevated);
-        color: var(--on-dark-soft);
-        font-size: 0.74rem;
-        font-family: var(--font-body);
-      }
-
-      @media (min-width: 640px) {
-        .footer-grid {
-          grid-template-columns: 1.5fr 1fr 1fr;
-          gap: 3rem;
-        }
-      }
-
-      /* ============================================================
-         RESPONSIVE & ACCESSIBILITY
-         ============================================================ */
-      @media (prefers-reduced-motion: reduce) {
-        html {
-          scroll-behavior: auto;
-        }
-        *,
-        *::before,
-        *::after {
-          transition-duration: 0.01ms !important;
-        }
-      }
-
-      .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-        color: var(--muted);
-      }
-
-      .empty-state h3 {
-        color: var(--ink);
-        font-family: var(--font-heading);
-        font-size: 1.2rem;
-        margin: 0 0 0.5rem;
-        font-weight: 400;
-      }
-
-      .empty-state p {
-        font-family: var(--font-body);
-        color: var(--muted);
-      }
     </style>
-  </head>
-  <body>
-    <slot />
-  </body>
+</head>
+<body x-data="clubsApp()" x-init="initApp()" @keydown.window="handleKeydown($event)" class="bg-surface text-on-surface antialiased min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-white font-body-md text-body-md flex flex-col">
+
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
+        <div class="motif-wordmark">CLUBS</div>
+    </div>
+
+    <Navbar />
+
+    <!-- Page Content gets injected here -->
+    <slot /> 
+
+    <Footer />
+
+    <!-- Global Toast Notification -->
+    <div x-cloak x-show="toast.show" class="fixed bottom-10 right-10 z-[110]">
+        <div class="bg-on-surface text-surface px-6 py-4 font-meta-label text-xs tracking-widest uppercase flex items-center gap-3 diffusion-shadow">
+            <span class="material-symbols-outlined font-light text-[18px]">check</span>
+            <span x-text="toast.message"></span>
+        </div>
+    </div>
+
+    <script is:inline>
+        function clubsApp() {
+            return {
+                isAdmin: false,
+                clickCount: 0,
+                clickTimer: null,
+                showAddClubModal: false,
+                toast: { show: false, message: '' },
+                clicks: {},
+                clubs: window.initialClubsData || [], 
+                
+                initApp() {
+                    if (window.location.hash === '#admin') this.enableAdminMode();
+                    
+                    const storedClicks = localStorage.getItem('aloysius_club_clicks');
+                    if (storedClicks) {
+                        try { this.clicks = JSON.parse(storedClicks); } catch(e) { this.clicks = {}; }
+                    } else {
+                        this.clubs.forEach(c => this.clicks[c.id] = 0);
+                    }
+                },
+                
+                handleLogoClick() {
+                    this.clickCount++;
+                    if (this.clickCount === 1) {
+                        this.clickTimer = setTimeout(() => { this.clickCount = 0; }, 2500);
+                    }
+                    if (this.clickCount >= 5) {
+                        clearTimeout(this.clickTimer); this.clickCount = 0; this.enableAdminMode();
+                    }
+                },
+                
+                handleKeydown(e) {
+                    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+                        e.preventDefault(); this.enableAdminMode();
+                    }
+                },
+                
+                enableAdminMode() {
+                    if (!this.isAdmin) {
+                        this.isAdmin = true;
+                        window.location.hash = 'admin';
+                        this.toast.message = 'Admin Access Granted';
+                        this.toast.show = true;
+                        setTimeout(() => { this.toast.show = false; }, 3000);
+                    }
+                },
+                
+                visitClub(clubId, link) {
+                    if (!this.clicks[clubId]) this.clicks[clubId] = 0;
+                    this.clicks[clubId]++;
+                    localStorage.setItem('aloysius_club_clicks', JSON.stringify(this.clicks));
+                    
+                    this.toast.message = 'Visit Logged... Redirecting';
+                    this.toast.show = true;
+                    
+                    if (link && link !== 'undefined' && link !== '#') {
+                        setTimeout(() => { window.location.href = link; }, 400);
+                    } else {
+                        setTimeout(() => { this.toast.show = false; }, 2000);
+                    }
+                },
+                
+                getTotalClicks() {
+                    return Object.values(this.clicks).reduce((a, b) => a + (b || 0), 0) || 0;
+                }
+            }
+        }
+    </script>
+</body>
 </html>
