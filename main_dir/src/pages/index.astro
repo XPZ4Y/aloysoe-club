@@ -1,78 +1,579 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import ClubCard from '../components/ClubCard.astro';
-import { clubsData } from '../data/clubs.js';
+const clubs = [
+  { name: 'Entrepreneurs Club', category: 'Entrepreneurship', tagline: 'Think. Build. Launch.', note: 'Build startups, learn business, and turn ideas into real products.', logo: '/clubs/entrepreneurs-logo.png', url: 'https://entrepreneursclubsoe.vercel.app/', accent: '#3d57ba', initials: 'EC', destination: 'Official site' },
+  { name: 'Drama & Theatre Club', category: 'Arts & Culture', tagline: 'Tell stories on stage.', note: 'Acting, direction, writing, set design, and technical theatre.', logo: '/clubs/drama-logo.png', url: 'https://dramatheatreclub.vercel.app/', accent: '#ba1a1a', initials: 'DT', destination: 'Official site' },
+  { name: 'VISORA', category: 'Creative Media', tagline: 'Visualize. Create. Connect.', note: 'The official media collective documenting campus life through photo, video, and design.', logo: '/clubs/visora-feature.jpeg', url: 'https://visora-media-soe.vercel.app/', accent: '#673ab7', initials: 'VI', destination: 'Official site' },
+  { name: 'SDG Club 2026', category: 'Sustainability', tagline: 'Act local. Impact global.', note: 'Turn student ideas into action through education, sustainability, and community work.', logo: '/clubs/sdg-official-logo.png', url: 'https://sdg-roadmap.lovable.app', accent: '#13795b', initials: 'SD', destination: 'Official site' },
+  { name: 'VT-ENG', category: 'Aviation & Aerospace', tagline: 'Build the future of flight.', note: 'Explore aviation through systems, simulation, weather, drones, and research.', logo: '/vteng/ChatGPT Image Aug 14, 2026, 09_25_41 PM-Photoroom.png', url: '/vteng/index.html', accent: '#087f9f', initials: 'VT', destination: 'Hub listing' },
+  { name: 'Decibel Music club', category: 'Music', tagline: 'Play music with us.', note: 'Rehearse, jam, and perform at open mics and gig nights. No audition needed.', logo: '/clubs/decibel-logo.png', url: 'https://decibel-musicclub.netlify.app/', accent: '#7b3f98', initials: 'DB', destination: 'Official site' },
+  { name: 'InSync', category: 'Dance & Performance', tagline: 'Dance is an attitude.', note: 'Move different, feel everything, and find your stage.', logo: '/clubs/insync-hero.png', url: 'https://insync-sage.vercel.app/', accent: '#b45309', initials: 'IS', destination: 'Official site' },
+  { name: 'Forge Club', category: 'Innovation', tagline: 'Build the bigger pie.', note: 'A maker community for students who want to create useful things together.', logo: '/clubs/forge-logo.png', url: 'https://shawnpeter578.github.io/innovation/', accent: '#a15c00', initials: 'FG', destination: 'Official site' },
+  { name: 'Speakers Lounge', category: 'Communication', tagline: 'Speak under pressure.', note: 'Build confidence through pitches, debates, improv, and real-world communication.', logo: '/clubs/speakers-lounge-logo.png', url: 'https://speakerlounge.vercel.app/', accent: '#9a6500', initials: 'SL', destination: 'Official site' },
+];
+
+const activityImage = '/clubs/entrepreneurs-event-06.jpg';
+
+const categories = ['All', ...new Set(clubs.map((club) => club.category))];
+
+function getContrastClass(name: string) {
+  return name === 'Drama & Theatre Club' || name === 'Speakers Lounge' || name === 'SDG Club 2026' ? ' logo-dark-tile' : name === 'InSync' ? ' logo-light-tile' : '';
+}
+
+const icons = {
+  ArrowDown: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>`,
+  ArrowUpRight: `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>`,
+  ArrowUpRightSmall: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>`,
+  Check: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  Search: `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
+};
 ---
 
-<Layout title="St Aloysius Clubs Directory">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>St Aloysius | Clubs Directory</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
     
-    <!-- Pass server-side Astro data to client-side JS window object -->
-    <script define:vars={{ clubsData }}>
-        window.initialClubsData = clubsData;
-    </script>
+    :root {
+      font-family: Geist, Arial, sans-serif;
+      color: #131b2e;
+      background: #faf8ff;
+      --primary: #00175c;
+      --primary-2: #00288e;
+      --surface: #faf8ff;
+      --surface-low: #f2f3ff;
+      --surface-high: #e1e7ff;
+      --blueprint: #e2e8f0;
+      --text: #131b2e;
+      --muted: #5d5f5f;
+      --outline: #c4c5d5;
+      --mono: 'JetBrains Mono', monospace;
+      font-synthesis: none;
+    }
+    
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--surface); color: var(--text); }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    
+    .page-width { max-width: 1280px; margin: auto; padding-left: 40px; padding-right: 40px; }
+    
+    .topbar {
+      height: 80px;
+      background: #faf8ff;
+      border-bottom: 1px solid var(--outline);
+      box-shadow: 2px 2px 0 var(--blueprint);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .topbar-inner {
+      height: 100%; max-width: 1280px; margin: auto;
+      padding: 0 40px; display: flex; align-items: center; justify-content: space-between;
+    }
+    
+    .official-brand { display: flex; align-items: center; gap: 13px; }
+    .official-brand img { width: 156px; height: 50px; object-fit: contain; background: #fff; padding: 3px; }
+    .official-brand span { font: 600 11px/1.2 var(--mono); letter-spacing: .08em; color: var(--primary); }
+    .official-brand b { font-weight: 500; color: var(--muted); font-size: 9px; }
+    
+    .topbar nav { display: flex; align-items: center; gap: 30px; font-size: 14px; color: var(--muted); }
+    .topbar nav a { display: flex; align-items: center; gap: 5px; padding: 28px 0; border-bottom: 2px solid transparent; }
+    .topbar nav a:hover, .topbar nav a.active { color: var(--primary); }
+    .topbar nav a.active { border-color: var(--primary); font-weight: 700; }
+    
+    .top-actions { display: flex; align-items: center; gap: 14px; }
+    .top-icon { font-size: 21px; color: var(--muted); }
+    
+    .login-button, .blue-button {
+      background: var(--primary); color: #fff; border: 0;
+      box-shadow: 4px 4px 0 var(--blueprint);
+      font: 600 11px var(--mono); letter-spacing: .08em; padding: 14px 18px;
+    }
+    .blue-button { display: inline-flex; align-items: center; gap: 8px; }
+    .blue-button:hover { transform: translateY(-2px); box-shadow: 6px 6px 0 var(--blueprint); }
+    
+    .mobile-menu {
+      display: none; border: 1px solid var(--outline); background: transparent;
+      color: var(--primary); padding: 9px; cursor: pointer;
+    }
+    
+    .blueprint-hero {
+      display: grid; grid-template-columns: 2fr 1fr; gap: 72px; align-items: center;
+      padding-top: 100px; padding-bottom: 96px;
+    }
+    
+    .technical-path, .section-tag, .metric-label, .node-label, .card-category, .footer-label {
+      font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+    }
+    .technical-path { display: flex; gap: 13px; margin-bottom: 24px; }
+    .technical-path b { color: var(--primary); font-weight: 500; }
+    .technical-path i { font-style: normal; color: var(--outline); }
+    
+    .hero-left h1 { font-size: clamp(56px,7vw,92px); line-height: 1.02; letter-spacing: -.065em; margin: 0 0 25px; font-weight: 800; }
+    .hero-left h1 em, .practice h2 em, .directory-heading h2 em { font-style: italic; font-weight: 400; color: var(--primary); }
+    .hero-left > p { max-width: 580px; color: #444653; font-size: 17px; line-height: 1.65; margin: 0 0 30px; }
+    
+    .hero-actions { display: flex; align-items: center; gap: 26px; }
+    .under-link { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--muted); border-bottom: 1px solid var(--muted); padding-bottom: 7px; }
+    .under-link:hover { color: var(--primary); border-color: var(--primary); }
+    
+    .metric-card {
+      background: #faf8ff; border: 1px solid var(--outline); padding: 30px;
+      position: relative; box-shadow: 4px 4px 0 var(--blueprint);
+    }
+    .node-id { position: absolute; right: 18px; top: 18px; color: #8b8d99; font: 11px var(--mono); }
+    .metric-label { border-bottom: 1px solid var(--outline); padding-bottom: 16px; margin-bottom: 22px; }
+    .metric-number { display: flex; align-items: end; gap: 15px; margin-bottom: 24px; }
+    .metric-number strong { font-size: 112px; line-height: .8; letter-spacing: -.1em; color: var(--primary); }
+    .metric-number span { font: 500 11px/1.45 var(--mono); color: var(--muted); padding-bottom: 4px; }
+    
+    .metric-card ul { list-style: none; padding: 18px 0 0; margin: 0; border-top: 1px solid var(--outline); }
+    .metric-card li { font: 500 11px var(--mono); letter-spacing: .08em; color: var(--muted); padding: 8px 0; }
+    .metric-card li b { color: var(--primary-2); margin-right: 14px; }
+    .metric-rule { height: 4px; background: var(--primary); position: absolute; bottom: 0; left: 0; right: 0; }
+    
+    .quick-links { border-top: 1px solid var(--outline); border-bottom: 1px solid var(--outline); background: var(--surface-low); overflow: hidden; }
+    .quick-track { max-width: 1280px; margin: auto; padding: 14px 40px; display: flex; gap: 14px; overflow: auto; }
+    .quick-track a {
+      display: flex; align-items: center; gap: 10px; white-space: nowrap;
+      background: #faf8ff; border: 1px solid var(--outline); box-shadow: 2px 2px 0 var(--blueprint);
+      padding: 8px 12px; font: 500 10px var(--mono); letter-spacing: .07em; color: var(--muted);
+    }
+    .quick-track a:hover { color: var(--primary); border-color: var(--primary); }
+    
+    .logo-mark {
+      width: 50px; height: 50px; background: #e2e8f0; border: 1px solid var(--outline);
+      display: grid; place-items: center; position: relative; overflow: hidden; flex-shrink: 0;
+    }
+    .logo-mark img { width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 1; transition: opacity .2s ease; }
+    .logo-mark span { position: absolute; color: var(--logo-accent, var(--primary)); font: 700 13px var(--mono); z-index: 0; }
+    .logo-mark-small { width: 28px; height: 28px; }
+    .logo-mark-small span { font-size: 8px; }
+    .logo-mark:hover img { opacity: .9; }
+    
+    .practice { display: grid; grid-template-columns: 5fr 7fr; gap: 72px; padding-top: 112px; padding-bottom: 112px; align-items: start; }
+    .section-tag { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
+    .section-tag b { font-weight: 600; color: var(--primary); font-size: 14px; }
+    .practice h2 { font-size: clamp(45px,5vw,72px); line-height: 1.02; letter-spacing: -.07em; margin: 0 0 28px; }
+    .practice-copy > p { max-width: 450px; color: #444653; line-height: 1.65; font-size: 16px; margin: 0; }
+    .practice-copy > p + p { margin-top: 20px; }
+    
+    .practice-image {
+      height: 430px; border: 4px solid var(--surface); background: var(--surface-high);
+      position: relative; box-shadow: 0 0 0 1px var(--outline); overflow: hidden; cursor: crosshair;
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+    .practice-image > img {
+      width: 100%; height: 100%; object-fit: cover; filter: grayscale(.8); opacity: .9;
+      transition: transform .7s cubic-bezier(.2,.75,.25,1), filter .5s ease, opacity .5s ease; transform: scale(1.01);
+    }
+    .practice-image:hover { transform: translateY(-4px); box-shadow: 8px 8px 0 var(--blueprint); }
+    .practice-image:hover > img { transform: scale(1.08); filter: grayscale(0) saturate(1.08) contrast(1.04); opacity: 1; }
+    .practice-image:after {
+      content: 'MOVE THROUGH THE MOMENT ↗'; position: absolute; top: 14px; right: 14px;
+      padding: 8px 10px; background: #00175ce6; color: #fff; font: 500 9px var(--mono);
+      letter-spacing: .08em; opacity: 0; transform: translateY(-5px); transition: opacity .25s, transform .25s;
+    }
+    .practice-image:hover:after { opacity: 1; transform: translateY(0); }
+    
+    .image-caption {
+      position: absolute; right: 0; bottom: 0; width: 50%; background: var(--primary); color: #fff; padding: 24px;
+      transition: transform .35s ease;
+    }
+    .practice-image:hover .image-caption { transform: translateY(-5px); }
+    .image-caption span { font: 500 10px var(--mono); letter-spacing: .1em; color: #b8c4ff; }
+    .image-caption strong { display: block; font-size: 22px; line-height: 1.25; margin-top: 34px; }
+    
+    .directory-section {
+      background: var(--surface-low); border-top: 1px solid var(--outline);
+      border-bottom: 1px solid var(--outline); padding: 100px 0 112px;
+    }
+    .directory-heading { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 36px; }
+    .directory-heading h2 { font-size: clamp(48px,6vw,78px); line-height: 1; letter-spacing: -.07em; margin: 0; }
+    .directory-tools { max-width: 390px; }
+    .directory-tools p { font-size: 14px; line-height: 1.55; color: #444653; margin: 0 0 16px; }
+    
+    .search-box {
+      display: flex; align-items: center; gap: 10px; background: #faf8ff;
+      border: 1px solid var(--outline); padding: 0 13px; color: var(--muted); height: 46px;
+    }
+    .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+    .search-box input { border: 0; background: transparent; outline: 0; width: 100%; color: var(--text); font: 500 11px var(--mono); }
+    
+    .filter-row { display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--outline); padding-bottom: 24px; margin-bottom: 26px; }
+    .filter-row button {
+      background: #faf8ff; border: 1px solid var(--outline); color: var(--muted); padding: 9px 12px;
+      cursor: pointer; font: 500 10px var(--mono); text-transform: uppercase;
+    }
+    .filter-row button:hover, .filter-row button.filter-active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    
+    .directory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .directory-card {
+      background: #faf8ff; border: 1px solid var(--outline); padding: 24px; min-height: 332px;
+      display: flex; flex-direction: column; position: relative; transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+    .directory-card:before {
+      content: ''; position: absolute; top: -1px; left: -1px; right: -1px; height: 3px; background: var(--club-accent);
+    }
+    .directory-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 4px 4px 0 var(--blueprint); }
+    .directory-card .logo-mark { margin: 23px 0 17px; }
+    
+    .card-category { font-size: 10px; margin-bottom: 8px; color: var(--muted); }
+    .directory-card h3 { font-size: 23px; letter-spacing: -.04em; margin: 0 0 6px; }
+    .card-tagline { font: italic 500 13px var(--mono); color: var(--primary-2); margin: 0 0 14px; }
+    .card-note { color: #444653; font-size: 14px; line-height: 1.5; margin: 0; flex: 1; }
+    .card-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--outline); padding-top: 15px; margin-top: 20px;
+    }
+    .card-status { display: flex; align-items: center; gap: 7px; color: var(--muted); font: 500 9px var(--mono); text-transform: uppercase; }
+    .card-status span, .footer-status span { width: 6px; height: 6px; background: #17865b; border-radius: 50%; display: inline-block; }
+    .card-bottom a { display: flex; align-items: center; gap: 6px; color: var(--primary); font: 600 10px var(--mono); letter-spacing: .06em; }
+    .card-bottom a:hover { color: var(--primary-2); text-decoration: underline; }
+    
+    .empty-state { display: none; min-height: 120px; align-items: center; justify-content: center; gap: 8px; border: 1px dashed var(--outline); color: var(--muted); font: 500 12px var(--mono); }
+    
+    .blueprint-footer { background: var(--primary); color: #fff; border-top: 4px solid #dfe3e8; padding: 78px 0 38px; }
+    .footer-inner { display: grid; gap: 42px; }
+    .footer-title { display: flex; align-items: center; gap: 24px; }
+    .footer-title img { width: 220px; height: 72px; object-fit: contain; background: #fff; padding: 5px; mix-blend-mode: normal; }
+    .footer-line { height: 1px; background: #b8c4ff55; flex: 1; }
+    .footer-columns { display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 50px; }
+    .footer-columns > div { display: flex; flex-direction: column; gap: 12px; }
+    .footer-columns a { color: #b8c4ff; font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .footer-columns a:hover { color: #fff; }
+    .footer-label { color: #b8c4ff; }
+    .footer-columns p { font-size: 14px; line-height: 1.6; color: #fff; margin: 0; }
+    .footer-status { display: flex; align-items: center; gap: 7px; font: 500 11px var(--mono)!important; color: #fff!important; }
+    
+    /* Polish App specific */
+    .blueprint-app { position: relative; isolation: isolate; }
+    .blueprint-app:before {
+      content: ''; position: fixed; inset: 80px 0 0;
+      background: url('/st-aloysius-campus.jpg') center/cover no-repeat;
+      opacity: .06; z-index: -2; pointer-events: none;
+    }
+    .campus-backdrop { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+    .campus-backdrop:after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, #faf8ffe8 0%, #faf8ffc7 34%, #faf8ff5c 70%, #faf8ffcf 100%), linear-gradient(0deg, #faf8ffdf 0%, transparent 34%, #faf8ffb8 100%);
+    }
+    .campus-backdrop img { width: 100%; height: 100%; object-fit: cover; object-position: center 42%; filter: saturate(.78) contrast(1.08); opacity: .58; transform: scale(1.04); }
+    .logo-dark-tile { background: #00175c; border-color: #00175c; }
+    .logo-light-tile { background: #fff; border-color: #c4c5d5; }
+    .official-brand img { mix-blend-mode: multiply; background: transparent; }
+    
+    @media (max-width: 900px) {
+      .page-width { padding-left: 24px; padding-right: 24px; }
+      .topbar-inner { padding: 0 24px; }
+      .topbar nav {
+        display: none; position: absolute; top: 80px; left: 0; right: 0;
+        background: #faf8ff; border-bottom: 1px solid var(--outline); padding: 10px 24px;
+        flex-direction: column; align-items: stretch; gap: 0;
+      }
+      .topbar nav.nav-open { display: flex; }
+      .topbar nav a { padding: 14px 0; border-bottom: 1px solid var(--outline); }
+      .mobile-menu { display: block; }
+      .top-actions { display: none; }
+      .blueprint-hero { grid-template-columns: 1fr; gap: 52px; padding-top: 70px; }
+      .metric-card { max-width: 480px; }
+      .practice { grid-template-columns: 1fr; gap: 42px; }
+      .directory-heading { display: block; }
+      .directory-tools { max-width: 500px; margin-top: 28px; }
+      .directory-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-columns { grid-template-columns: 1fr 1fr; }
+      .footer-columns > div:last-child { grid-column: 1 / -1; }
+    }
+    
+    @media (max-width: 600px) {
+      .page-width { padding-left: 16px; padding-right: 16px; }
+      .topbar-inner { padding: 0 16px; }
+      .official-brand img { width: 132px; height: 42px; }
+      .official-brand span { font-size: 9px; }
+      .blueprint-hero { padding-top: 58px; padding-bottom: 70px; }
+      .hero-left h1 { font-size: 56px; }
+      .hero-actions { align-items: flex-start; flex-direction: column; gap: 18px; }
+      .metric-number strong { font-size: 94px; }
+      .quick-track { padding-left: 16px; padding-right: 16px; }
+      .practice { padding-top: 78px; padding-bottom: 78px; }
+      .practice-image { height: 320px; }
+      .image-caption { width: 65%; padding: 16px; }
+      .image-caption strong { font-size: 17px; margin-top: 22px; }
+      .directory-section { padding: 78px 0; }
+      .directory-heading h2 { font-size: 54px; }
+      .directory-grid { grid-template-columns: 1fr; }
+      .directory-card { min-height: 300px; }
+      .footer-title { align-items: flex-start; flex-direction: column; gap: 18px; }
+      .footer-title img { width: 210px; }
+      .footer-columns { grid-template-columns: 1fr; gap: 30px; }
+      .footer-columns > div:last-child { grid-column: auto; }
+      .campus-backdrop img { object-position: 60% center; opacity: .22; }
+      .campus-backdrop:after { background: linear-gradient(90deg, #faf8ffed 0%, #faf8ffb8 100%), linear-gradient(0deg, #faf8ff 0%, transparent 50%, #faf8ff 100%); }
+      .practice-image:after { opacity: 1; transform: none; top: 10px; right: 10px; font-size: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blueprint-app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="#top" class="official-brand">
+          <img src="/st-aloysius-official.png" alt="St Aloysius (Deemed to be University)" />
+          <span>ST ALOYSIUS<br /><b>CLUBS DIRECTORY</b></span>
+        </a>
+        <button class="mobile-menu" aria-label="Open menu" id="mobile-menu-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="menu-icon"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        </button>
+        <nav id="main-nav">
+          <a class="active" href="#directory">Directory</a>
+          <a href="#about">How it works</a>
+          <a href="https://staloysius.edu.in/" target="_blank" rel="noreferrer">
+            University <Fragment set:html={icons.ArrowUpRightSmall} />
+          </a>
+        </nav>
+        <div class="top-actions">
+          <span class="top-icon">◈</span>
+          <span class="top-icon">◎</span>
+          <a href="#directory" class="login-button">EXPLORE CLUBS</a>
+        </div>
+      </div>
+    </header>
 
-    <main class="relative z-10 w-full flex flex-col items-center justify-start pb-section_gap flex-grow">
-        <Hero />
+    <main id="top">
+      <section class="blueprint-hero page-width">
+        <div class="campus-backdrop" aria-hidden="true">
+          <img src="/st-aloysius-campus.jpg" alt="" />
+        </div>
+        <div class="hero-left">
+          <div class="technical-path"><span>SCHOOL OF ENGINEERING</span><i>/</i><b>STUDENT LIFE</b></div>
+          <h1>Find a <em>club</em> at<br />St Aloysius.</h1>
+          <p>Explore student-led communities. Find a subject that interests you. Visit the club website for current details.</p>
+          <div class="hero-actions">
+            <a href="#directory" class="blue-button">SEE THE CLUBS <Fragment set:html={icons.ArrowUpRight} /></a>
+            <a href="#about" class="under-link">WHY JOIN A CLUB <Fragment set:html={icons.ArrowDown} /></a>
+          </div>
+        </div>
+        <div class="metric-card">
+          <span class="node-id">NODE_00</span>
+          <div class="metric-label">STUDENT CLUB DIRECTORY / 2026</div>
+          <div class="metric-number">
+            <strong>{clubs.length}</strong>
+            <span>ACTIVE<br />STUDENT<br />CLUBS</span>
+          </div>
+          <ul>
+            <li><b>01</b> LEARN A SKILL</li>
+            <li><b>02</b> MEET STUDENTS</li>
+            <li><b>03</b> WORK ON PROJECTS</li>
+          </ul>
+          <div class="metric-rule"></div>
+        </div>
+      </section>
 
-        <!-- Directory Section -->
-        <section id="directory-section" class="relative w-full max-w-container_max_width px-margin_mobile md:px-gutter py-24 mx-auto z-10">
-            <div class="mb-20 border-b border-outline-variant/50 pb-8 flex justify-between items-end">
-                <div>
-                    <span class="font-meta-label text-meta-label text-primary uppercase tracking-widest mb-4 block">01 / Organizations</span>
-                    <h2 class="font-display-lg text-5xl text-on-surface">Active Clubs</h2>
-                </div>
-            </div>
+      <div class="quick-links">
+        <div class="quick-track">
+          {clubs.slice(0, 6).map((club) => (
+            <a href="#directory" key={club.name}>
+              <div class={`logo-mark logo-mark-small${getContrastClass(club.name)}`} style={`--logo-accent: ${club.accent}`}>
+                <img src={club.logo} alt={`${club.name} logo`} onerror="this.style.display='none'" />
+                <span>{club.initials}</span>
+              </div>
+              <span>{club.name.toUpperCase()}</span>
+              <Fragment set:html={icons.ArrowUpRightSmall} />
+            </a>
+          ))}
+        </div>
+      </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-                {clubsData.map((club, index) => (
-                    <ClubCard club={club} index={index} />
-                ))}
-            </div>
-        </section>
+      <section class="practice page-width" id="about">
+        <div class="practice-copy">
+          <div class="section-tag"><b>01</b><span>WHY JOIN A CLUB</span></div>
+          <h2>Build skills.<br /><em>Meet students.</em></h2>
+          <p>Clubs are student-led groups. They help you build skills, confidence, friendships, and experience.</p>
+          <p>Use this directory to compare communities. Each verified listing links to the club website for current information and joining instructions.</p>
+        </div>
+        <div class="practice-image">
+          <img src={activityImage} alt="Students collaborating during a club activity" />
+          <div class="image-caption">
+            <span>STUDENT LIFE / IN PRACTICE</span>
+            <strong>Learn by<br />working together.</strong>
+          </div>
+        </div>
+      </section>
 
-        <!-- Analytics Section -->
-        <section id="analytics-section" x-cloak x-show="isAdmin" class="relative w-full max-w-container_max_width px-margin_mobile md:px-gutter py-24 mx-auto z-10 bg-white/90 backdrop-blur-md border border-outline-variant/30 my-20 diffusion-shadow">
-            <div class="p-12 border-b border-outline-variant/30">
-                <span class="font-meta-label text-meta-label text-primary uppercase tracking-widest block mb-4">02 / Admin</span>
-                <h2 class="font-display-lg text-5xl text-on-surface">Analytics</h2>
+      <section class="directory-section" id="directory">
+        <div class="page-width">
+          <div class="directory-heading">
+            <div>
+              <div class="section-tag"><b>02</b><span>THE DIRECTORY</span></div>
+              <h2>Find a <em>club.</em></h2>
             </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-0 border-b border-outline-variant/30">
-                <div class="p-12 border-r border-b md:border-b-0 border-outline-variant/30">
-                    <span class="font-meta-label text-meta-label text-on-surface-variant uppercase tracking-widest block mb-4">Total Clicks</span>
-                    <p x-text="getTotalClicks()" class="font-display-lg text-6xl text-on-surface"></p>
-                </div>
-                <div class="p-12 border-b md:border-b-0 md:border-r border-outline-variant/30">
-                    <span class="font-meta-label text-meta-label text-on-surface-variant uppercase tracking-widest block mb-4">Active Clubs</span>
-                    <p class="font-display-lg text-6xl text-on-surface">{clubsData.length}</p>
-                </div>
-                <div class="p-12 border-outline-variant/30">
-                    <span class="font-meta-label text-meta-label text-on-surface-variant uppercase tracking-widest block mb-4">Top Club Traffic</span>
-                    <p x-text="Math.max(...Object.values(clicks).length ? Object.values(clicks) : [0])" class="font-display-lg text-6xl text-primary"></p>
-                </div>
+            <div class="directory-tools">
+              <p>Search by name or subject. Select a category. Visit the club website for more information.</p>
+              <label class="search-box">
+                <Fragment set:html={icons.Search} />
+                <input id="search-input" aria-label="Search clubs or subjects" placeholder="Search clubs or subjects" />
+              </label>
             </div>
+          </div>
+          
+          <div class="filter-row">
+            {categories.map((item) => (
+              <button 
+                type="button" 
+                class={item === 'All' ? 'filter-active' : ''} 
+                data-category={item} 
+                aria-pressed={item === 'All' ? 'true' : 'false'}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
 
-            <div class="w-full">
-                <div class="p-8 border-b border-outline-variant/30 bg-surface/50 grid grid-cols-12 gap-6 font-meta-label text-meta-label text-on-surface-variant uppercase tracking-widest">
-                    <div class="col-span-8 md:col-span-5">Organization</div>
-                    <div class="col-span-4 md:col-span-2 text-right">Traffic</div>
-                    <div class="col-span-5 hidden md:block">Volume</div>
+          <div class="directory-grid" id="directory-grid">
+            {clubs.map((club, index) => (
+              <article 
+                class="directory-card" 
+                style={`--club-accent: ${club.accent}`} 
+                data-category={club.category}
+                data-search={`${club.name} ${club.category} ${club.tagline} ${club.note}`.toLowerCase()}
+              >
+                <span class="node-label">NODE_{String(index + 1).padStart(2, '0')}</span>
+                <div class={`logo-mark${getContrastClass(club.name)}`} style={`--logo-accent: ${club.accent}`}>
+                  <img src={club.logo} alt={`${club.name} logo`} onerror="this.style.display='none'" />
+                  <span>{club.initials}</span>
                 </div>
-                
-                <template x-for="club in [...clubs].sort((a,b) => (clicks[b.id]||0) - (clicks[a.id]||0))" :key="club.id">
-                    <div class="p-8 border-b border-outline-variant/20 grid grid-cols-12 gap-6 items-center hover:bg-surface/30 transition-colors">
-                        <div class="col-span-8 md:col-span-5 font-body-lg text-on-surface" x-text="club.name"></div>
-                        <div class="col-span-4 md:col-span-2 text-right font-status-code text-on-surface" x-text="clicks[club.id] || 0"></div>
-                        <div class="col-span-5 hidden md:flex items-center">
-                            <div class="w-full h-1 bg-surface-variant overflow-hidden">
-                                <div class="h-full bg-primary transition-all duration-1000 ease-out" 
-                                     :style="`width: ${getTotalClicks() > 0 ? ((clicks[club.id]||0) / getTotalClicks() * 100) : 0}%`"></div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </section>
+                <div class="card-category">{club.category}</div>
+                <h3>{club.name}</h3>
+                <p class="card-tagline">{club.tagline}</p>
+                <p class="card-note">{club.note}</p>
+                <div class="card-bottom">
+                  <span class="card-status"><span></span>{club.destination}</span>
+                  <a href={club.url} target="_blank" rel="noreferrer">
+                    VISIT CLUB <Fragment set:html={icons.ArrowUpRight} />
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div class="empty-state" id="empty-state">
+            <Fragment set:html={icons.Check} /> No clubs match. Try a different subject or category.
+          </div>
+        </div>
+      </section>
     </main>
-</Layout>
+
+    <footer class="blueprint-footer">
+      <div class="page-width footer-inner">
+        <div class="footer-title">
+          <img src="/st-aloysius-official.png" alt="St Aloysius" />
+          <div class="footer-line"></div>
+        </div>
+        <div class="footer-columns">
+          <div>
+            <a href="#directory">Directory</a>
+            <a href="#about">How it works</a>
+            <a href="https://staloysius.edu.in/" target="_blank" rel="noreferrer">University website</a>
+          </div>
+          <div>
+            <span class="footer-label">CAMPUS ADDRESS</span>
+            <p>St Aloysius College Rd, Kodailbail<br />Mangaluru, Karnataka 575003</p>
+          </div>
+          <div>
+            <span class="footer-label">DIRECTORY STATUS</span>
+            <p class="footer-status"><span></span> ACTIVE · {clubs.length} CLUBS</p>
+            <p>© 2026 St Aloysius School of Engineering.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('search-input') as HTMLInputElement;
+      const filterButtons = document.querySelectorAll('.filter-row button');
+      const cards = document.querySelectorAll('.directory-card');
+      const emptyState = document.getElementById('empty-state');
+      
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mainNav = document.getElementById('main-nav');
+      const menuIcon = document.getElementById('menu-icon');
+
+      let query = '';
+      let category = 'All';
+
+      // Filtering Logic
+      function updateGrid() {
+        let visibleCount = 0;
+        
+        filterButtons.forEach(btn => {
+          if (btn.getAttribute('data-category') === category) {
+            btn.classList.add('filter-active');
+            btn.setAttribute('aria-pressed', 'true');
+          } else {
+            btn.classList.remove('filter-active');
+            btn.setAttribute('aria-pressed', 'false');
+          }
+        });
+
+        cards.forEach(card => {
+          const el = card as HTMLElement;
+          const searchStr = el.getAttribute('data-search') || '';
+          const catStr = el.getAttribute('data-category') || '';
+          
+          const matchesQuery = query === '' || searchStr.includes(query.toLowerCase());
+          const matchesCategory = category === 'All' || catStr === category;
+
+          if (matchesQuery && matchesCategory) {
+            el.style.display = 'flex';
+            visibleCount++;
+          } else {
+            el.style.display = 'none';
+          }
+        });
+
+        if (emptyState) {
+          emptyState.style.display = visibleCount === 0 ? 'flex' : 'none';
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          query = (e.target as HTMLInputElement).value;
+          updateGrid();
+        });
+      }
+
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          category = (e.currentTarget as HTMLElement).getAttribute('data-category') || 'All';
+          updateGrid();
+        });
+      });
+
+      // Mobile Menu Logic
+      let menuOpen = false;
+      if (mobileBtn && mainNav && menuIcon) {
+        mobileBtn.addEventListener('click', () => {
+          menuOpen = !menuOpen;
+          if (menuOpen) {
+            mainNav.classList.add('nav-open');
+            mobileBtn.setAttribute('aria-label', 'Close menu');
+            menuIcon.innerHTML = `<path d="M18 6 6 18M6 6l12 12"/>`;
+          } else {
+            mainNav.classList.remove('nav-open');
+            mobileBtn.setAttribute('aria-label', 'Open menu');
+            menuIcon.innerHTML = `<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>`;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
